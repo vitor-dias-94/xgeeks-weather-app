@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
-import './App.css';
+
+//Styles
+import './App.scss';
+import { Card } from '@material-ui/core';
+// Services
 import * as OpenWeatherMapAPI from './services/OpenWeatherMapAPI';
+// Utils
+import moment from 'moment';
 
 class App extends Component {
 
@@ -78,7 +84,44 @@ class App extends Component {
 
     return (
       <div className="App">
-        {JSON.stringify(this.state.weatherInfo)}
+        <Card className="weather-info">
+          <h2>Weather in {this.state.weatherInfo.name}, {this.state.weatherInfo.sys.country}</h2>
+          <div className="icon">
+            <img src='https://openweathermap.org/img/w/02d.png' width='50' height='50' alt='Icon' />
+            <h3>{this.state.weatherInfo.main.temp} °C</h3>
+          </div>
+          <p>{this.state.weatherInfo.weather[0].description}</p>
+          <p>{moment.utc(this.state.weatherInfo.dt, 'X').format('HH:mm MMM D')}</p>
+          <table>
+            <tbody>
+              <tr>
+                <td>Wind</td>
+                <td>{this.state.weatherInfo.wind.speed} m/s</td>
+              </tr>
+              <tr>
+                <td>Cloudiness</td>
+                <td>{this.state.weatherInfo.weather[0].description}</td>
+              </tr>
+              <tr>
+                <td>Pressure</td>
+                <td>{this.state.weatherInfo.main.pressure} hpa</td>
+              </tr>
+              <tr>
+                <td>Humidity</td>
+                <td>{this.state.weatherInfo.main.humidity} %</td>
+              </tr>
+              <tr>
+                <td>Sunrise</td>
+                <td>{moment.utc(this.state.weatherInfo.sys.sunrise, 'X').format('HH:mm')}</td>
+              </tr>
+              <tr>
+                <td>Sunset</td>
+                <td>{moment.utc(this.state.weatherInfo.sys.sunset, 'X').format('HH:mm')}</td>
+              </tr>
+            </tbody>
+          </table>
+        </Card>
+
         {JSON.stringify(this.state.forecastInfo)}
       </div>
     );
