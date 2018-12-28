@@ -1,7 +1,23 @@
-export const getWeatherInfo = () => {
-  return fetch('https://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=9000a8a46d6261d81d801bbf76d78870')
+import * as CONFIG from '../config';
+
+export const getWeatherInfo = (lat, lon) => {
+  return makeRequest(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&APPID=${CONFIG.APPID}`);
+}
+
+export const getForecastInfo = (lat, lon) => {
+  return makeRequest(`https://api.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=10&units=metric&APPID=${CONFIG.APPID}`);
+}
+
+const makeRequest = (url) => {
+  return fetch(url)
     .then(response => {
-      return response.json();
+      if (!response.ok) {
+        return response.json().then(error => {
+          throw error;
+        });
+      } else {
+        return response.json();
+      }
     })
     .catch(error => {
       throw error;

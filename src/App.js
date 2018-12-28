@@ -9,19 +9,61 @@ class App extends Component {
 
     this.state = {
       loading: true,
-      weatherInfo: null
+      weatherInfo: null,
+      forecastInfo: null
     };
 
-    this.getData();
+    this.init();
   }
 
-  getData() {
-    OpenWeatherMapAPI.getWeatherInfo()
+  async init() {
+    try {
+      const position = await this.getGeolocation();
+      await this.getWeatherInfo(position);
+      await this.getForecastInfo(position);
+
+      this.setState({ ...this.state, loading: false });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  getGeolocation() {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({ lat: position.coords.latitude, lon: position.coords.longitude });
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+      } else {
+        reject('Geolocation unavailable.');
+      }
+    });
+  }
+
+  getWeatherInfo(position) {
+    return OpenWeatherMapAPI.getWeatherInfo(position.lat, position.lon)
       .then(response => {
-        this.setState({ ...this.state, loading: false, weatherInfo: response });
+        console.log('getWeatherInfo', response);
+        this.setState({ ...this.state, weatherInfo: response });
       })
       .catch(error => {
-        console.error(error);
+        throw error;
+      });
+  }
+
+  getForecastInfo(position) {
+    return OpenWeatherMapAPI.getForecastInfo(position.lat, position.lon)
+      .then(response => {
+        console.log('getForecastInfo', response);
+        this.setState({ ...this.state, forecastInfo: response });
+      })
+      .catch(error => {
+        throw error;
       });
   }
 
@@ -37,6 +79,7 @@ class App extends Component {
     return (
       <div className="App">
         {JSON.stringify(this.state.weatherInfo)}
+        {JSON.stringify(this.state.forecastInfo)}
       </div>
     );
   }

@@ -1,0 +1,1 @@
+export const APPID = '9000a8a46d6261d81d801bbf76d78870';
