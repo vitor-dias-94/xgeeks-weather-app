@@ -5,8 +5,24 @@
   padding: 20px;
   p {
     font-size: 14px;
-    margin: 5px 0 5px 0;
+    margin: 5px 0;
   }
+  table {
+    font-size: 14px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    td, th {
+      border: 1px solid #ddd;
+      padding: 5px;
+    }
+    thead tr {
+      border-bottom: solid 2px #777;
+    }
+    tbody tr:nth-child(odd) {
+      background-color: #f9f9f9;
+    }
+  }
+
   .weather-info {
     padding: 20px;
     min-width: 300px;
@@ -22,15 +38,37 @@
     }
     table {
       min-width: 300px;
-      font-size: 14px;
-      border-collapse: collapse;
-      border-spacing: 0;
-      td {
-        border: 1px solid #ddd;
-        padding: 5px;
+    }
+  }
+
+  .forecast-info {
+    padding: 20px;
+    margin-top: 20px;
+    width: 95%;
+    table {
+      width: 100%;
+      tr {
+        .header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
       }
-      tr:nth-child(odd) {
-        background-color: #f9f9f9;
+      p {
+        font-size: 12px;
+        span {
+          padding: 0 2px;
+          &.max {
+            background-color: #f0ad4e;
+            margin-right: 5px;
+          }
+          &.min {
+            background-color: #bbb;
+          }
+        }
+        &.city {
+          font-size: 16px;
+        }
       }
     }
   }
