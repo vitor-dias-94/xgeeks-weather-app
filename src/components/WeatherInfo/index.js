@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 // Reducers actions
 import * as WeatherForecastInfoActions from '../../reducers/WeatherForecastInfo/actions';
+import * as AppActions from '../../reducers/App/actions';
 // Styles
 import './styles.scss';
 import { Card } from '@material-ui/core';
@@ -13,12 +14,13 @@ import moment from 'moment';
 const mapStateToProps = (state) => ({
   loadingWeather: state.weatherForecastInfoState.loadingWeather,
   weatherInfo: state.weatherForecastInfoState.weatherInfo,
-  userLocation: state.weatherForecastInfoState.userLocation
+  userLocation: state.appState.userLocation
 });
 
 const mapDispatchToProps = (dispatch) => ({
   dispatchGetWeatherData: () => dispatch(WeatherForecastInfoActions.getWeatherData()),
   dispatchUpdateWeatherData: (d) => dispatch(WeatherForecastInfoActions.updateWeatherData(d)),
+  dispatchSetError: (d) => dispatch(AppActions.setError(d))
 });
 
 class WeatherInfo extends Component {
@@ -35,6 +37,7 @@ class WeatherInfo extends Component {
       this.props.dispatchUpdateWeatherData(weatherInfo);
     } catch (error) {
       console.error(error);
+      this.props.dispatchSetError(error.message || error);
     }
   }
 

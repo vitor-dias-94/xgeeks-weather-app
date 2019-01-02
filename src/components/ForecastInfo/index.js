@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 // Reducers actions
 import * as WeatherForecastInfoActions from '../../reducers/WeatherForecastInfo/actions';
+import * as AppActions from '../../reducers/App/actions';
 // Styles
 import './styles.scss';
 import { Card, Button } from '@material-ui/core';
@@ -13,7 +14,7 @@ import moment from 'moment';
 const mapStateToProps = (state) => ({
   loadingForecast: state.weatherForecastInfoState.loadingForecast,
   forecastInfo: state.weatherForecastInfoState.forecastInfo,
-  userLocation: state.weatherForecastInfoState.userLocation
+  userLocation: state.appState.userLocation
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -21,7 +22,8 @@ const mapDispatchToProps = (dispatch) => ({
   dispatchGetForecastData: () => dispatch(WeatherForecastInfoActions.getForecastData()),
   dispatchUpdateWeatherData: (d) => dispatch(WeatherForecastInfoActions.updateWeatherData(d)),
   dispatchAddForecastData: (d) => dispatch(WeatherForecastInfoActions.addForecastData(d)),
-  dispatchDeleteForecastData: (d) => dispatch(WeatherForecastInfoActions.deleteForecastData(d)),  
+  dispatchDeleteForecastData: (d) => dispatch(WeatherForecastInfoActions.deleteForecastData(d)),
+  dispatchSetError: (d) => dispatch(AppActions.setError(d))
 });
 
 class ForecastInfo extends Component {
@@ -41,6 +43,7 @@ class ForecastInfo extends Component {
       this.canSaveLocalStorage = true;
     } catch (error) {
       console.error(error);
+      this.props.dispatchSetError(error.message || error);
     }
   }
 
