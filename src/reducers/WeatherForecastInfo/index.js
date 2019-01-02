@@ -1,35 +1,43 @@
 import {
-  GET_WEATHER_FORECAST_DATA,
-  SET_WEATHER_FORECAST_DATA,
+  GET_WEATHER_DATA,
+  GET_FORECAST_DATA,
+  UPDATE_WEATHER_DATA,
   ADD_FORECAST_DATA
 } from './action-types';
 
 const initialState = {
-  loading: false,
+  loadingWeather: false,
+  loadingForecast: false,
   weatherInfo: null,
   forecastInfo: [],
 };
 
 const WeatherForecastInfo = (state = initialState, action) => {
   switch (action.type) {
-    case GET_WEATHER_FORECAST_DATA: {
+    case GET_WEATHER_DATA: {
       return {
         ...state,
-        loading: true
+        loadingWeather: true
       };
     }
-    case SET_WEATHER_FORECAST_DATA: {
+    case GET_FORECAST_DATA: {
       return {
         ...state,
-        loading: false,
-        weatherInfo: action.payload.weatherInfo,
-        forecastInfo: [action.payload.forecastInfo],
+        loadingForecast: true
+      };
+    }
+    case UPDATE_WEATHER_DATA: {
+      return {
+        ...state,
+        loadingWeather: false,
+        weatherInfo: action.payload,
       };
     }
     case ADD_FORECAST_DATA: {
       return {
         ...state,
-        forecastInfo: [...state.forecastInfo, action.payload.forecastInfo],
+        loadingForecast: false,
+        forecastInfo: [...state.forecastInfo, action.payload],
       };
     }
     default: {

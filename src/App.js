@@ -16,8 +16,10 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatchGetWeatherForecastData: () => dispatch(WeatherForecastInfoActions.getWeatherForecastData()),
-  dispatchSetWeatherForecastData: (data) => dispatch(WeatherForecastInfoActions.setWeatherForecastData(data)),
+  dispatchGetWeatherData: () => dispatch(WeatherForecastInfoActions.getWeatherData()),
+  dispatchGetForecastData: () => dispatch(WeatherForecastInfoActions.getForecastData()),
+  dispatchUpdateWeatherData: (d) => dispatch(WeatherForecastInfoActions.updateWeatherData(d)),
+  dispatchAddForecastData: (d) => dispatch(WeatherForecastInfoActions.addForecastData(d)),
 });
 
 class App extends Component {
@@ -30,18 +32,15 @@ class App extends Component {
 
   async init() {
     try {
-      this.props.dispatchGetWeatherForecastData();
-
-      let data = {
-        weatherInfo: null,
-        forecastInfo: null
-      };
-
       const position = await this.getGeolocation();
-      data.weatherInfo = await this.getWeatherInfo(position);
-      data.forecastInfo = await this.getForecastInfo(position);
-
-      this.props.dispatchSetWeatherForecastData(data);
+      
+      this.props.dispatchGetWeatherData();
+      const weatherInfo = await this.getWeatherInfo(position);
+      this.props.dispatchUpdateWeatherData(weatherInfo);
+      
+      this.props.dispatchGetForecastData();
+      const forecastInfo = await this.getForecastInfo(position);
+      this.props.dispatchAddForecastData(forecastInfo);
     } catch (error) {
       console.error(error);
     }

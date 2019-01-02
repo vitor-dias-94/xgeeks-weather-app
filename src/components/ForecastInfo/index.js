@@ -7,7 +7,7 @@ import { Card } from '@material-ui/core';
 import moment from 'moment';
 
 const mapStateToProps = (state) => ({
-  loading: state.weatherForecastInfoState.loading,
+  loadingForecast: state.weatherForecastInfoState.loadingForecast,
   forecastInfo: state.weatherForecastInfoState.forecastInfo
 });
 
@@ -18,14 +18,14 @@ const mapDispatchToProps = (dispatch) => ({
 class ForecastInfo extends Component {
 
   render() {
-    if (this.props.loading || !this.props.forecastInfo.length) {
+    if (this.props.loadingForecast || !this.props.forecastInfo.length) {
       return (
         <Card className='forecast-info'>
           Loading forecast info...
         </Card>
       );
     }
-
+    
     return (
       <Card className='forecast-info'>
         <table>

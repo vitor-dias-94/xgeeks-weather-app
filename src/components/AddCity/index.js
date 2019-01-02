@@ -17,6 +17,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
+  dispatchGetForecastData: () => dispatch(WeatherForecastInfoActions.getForecastData()),
   dispatchAddForecastData: (d) => dispatch(WeatherForecastInfoActions.addForecastData(d)),
 });
 
@@ -63,9 +64,10 @@ class AddCity extends Component {
   }
 
   addCity(city) {
+    this.props.dispatchGetForecastData();
     this.getForecastInfo(city.coord)
       .then(response => {
-        this.props.dispatchAddForecastData({ forecastInfo: response });
+        this.props.dispatchAddForecastData(response);
       })
       .catch(error => {
         console.error(error);

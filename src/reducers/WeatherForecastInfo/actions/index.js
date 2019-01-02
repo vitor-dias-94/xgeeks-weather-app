@@ -1,18 +1,25 @@
 import {
-  GET_WEATHER_FORECAST_DATA,
-  SET_WEATHER_FORECAST_DATA,
+  GET_WEATHER_DATA,
+  GET_FORECAST_DATA,
+  UPDATE_WEATHER_DATA,
   ADD_FORECAST_DATA
 } from '../action-types';
 
-export const getWeatherForecastData = () => {
+export const getWeatherData = () => {
   return {
-    type: GET_WEATHER_FORECAST_DATA
+    type: GET_WEATHER_DATA
   }
 };
 
-export const setWeatherForecastData = (data) => {
+export const getForecastData = () => {
   return {
-    type: SET_WEATHER_FORECAST_DATA,
+    type: GET_FORECAST_DATA
+  }
+};
+
+export const updateWeatherData = (data) => {
+  return {
+    type: UPDATE_WEATHER_DATA,
     payload: data
   }
 };
