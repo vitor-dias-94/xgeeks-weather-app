@@ -1,0 +1,17 @@
+.weather-info {
+  padding: 20px;
+  min-width: 300px;
+  h2 {
+    margin: 5px;
+  }
+  .icon {
+    display: flex;
+    flex-direction: row;
+    h3 {
+      margin: 10px;
+    }
+  }
+  table {
+    min-width: 300px;
+  }
+}
