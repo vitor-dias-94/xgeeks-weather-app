@@ -13,7 +13,7 @@ import * as OpenWeatherMapAPI from '../../services/OpenWeatherMapAPI';
 import _ from 'lodash';
 
 const mapStateToProps = (state) => ({
-  //
+  forecastInfo: state.weatherForecastInfoState.forecastInfo
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -64,6 +64,10 @@ class AddCity extends Component {
   }
 
   addCity(city) {
+    if (_.findIndex(this.props.forecastInfo, ['city.id', city.id]) > -1) {
+      alert('Already added!');
+      return;
+    }
     this.props.dispatchGetForecastData();
     this.getForecastInfo(city.coord)
       .then(response => {
