@@ -8,6 +8,10 @@ export const getForecastInfo = (lat, lon) => {
   return makeRequest(`https://api.openweathermap.org/data/2.5/forecast/daily?lat=${lat}&lon=${lon}&cnt=10&units=metric&APPID=${CONFIG.APPID}`);
 }
 
+export const findCities = (value) => {
+  return makeRequest(`https://api.openweathermap.org/data/2.5/find?q=${value}&APPID=${CONFIG.APPID}`);
+}
+
 const makeRequest = (url) => {
   return fetch(url)
     .then(response => {

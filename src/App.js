@@ -7,6 +7,7 @@ import './App.scss';
 // Components
 import ForecastInfo from './components/ForecastInfo';
 import WeatherInfo from './components/WeatherInfo';
+import AddCity from './components/AddCity';
 // Services
 import * as OpenWeatherMapAPI from './services/OpenWeatherMapAPI';
 
@@ -89,6 +90,7 @@ class App extends Component {
     return (
       <div className="App">
         <WeatherInfo />
+        <AddCity />
         <ForecastInfo />
       </div>
     );
