@@ -2,6 +2,7 @@ import {
   GET_WEATHER_DATA,
   GET_FORECAST_DATA,
   UPDATE_WEATHER_DATA,
+  REFRESH_WEATHER_INFO_LOCATION,
   ADD_FORECAST_DATA,
   DELETE_FORECAST_DATA
 } from '../action-types';
@@ -21,6 +22,13 @@ export const getForecastData = () => {
 export const updateWeatherData = (data) => {
   return {
     type: UPDATE_WEATHER_DATA,
+    payload: data
+  }
+};
+
+export const refreshWeatherLocation = (data) => {
+  return {
+    type: REFRESH_WEATHER_INFO_LOCATION,
     payload: data
   }
 };

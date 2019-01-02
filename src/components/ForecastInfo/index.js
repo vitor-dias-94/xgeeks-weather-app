@@ -18,9 +18,8 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatchGetWeatherData: () => dispatch(WeatherForecastInfoActions.getWeatherData()),
   dispatchGetForecastData: () => dispatch(WeatherForecastInfoActions.getForecastData()),
-  dispatchUpdateWeatherData: (d) => dispatch(WeatherForecastInfoActions.updateWeatherData(d)),
+  dispatchRefreshWeatherLocation: (d) => dispatch(WeatherForecastInfoActions.refreshWeatherLocation(d)),
   dispatchAddForecastData: (d) => dispatch(WeatherForecastInfoActions.addForecastData(d)),
   dispatchDeleteForecastData: (d) => dispatch(WeatherForecastInfoActions.deleteForecastData(d)),
   dispatchSetError: (d) => dispatch(AppActions.setError(d))
@@ -68,33 +67,15 @@ class ForecastInfo extends Component {
   }
 
   handleUpdateClick = (city) => {
-    this.props.dispatchGetWeatherData();
-    this.getWeatherInfo(city.coord)
-      .then(response => {
-        this.props.dispatchUpdateWeatherData(response);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+    this.props.dispatchRefreshWeatherLocation(city.coord);
   }
 
   handleDeleteClick = (index) => {
     this.props.dispatchDeleteForecastData(index);
   }
 
-  getWeatherInfo(position) {
-    return OpenWeatherMapAPI.getWeatherInfo(position.lat, position.lon)
-      .then(response => {
-        console.log('getWeatherInfo', response);
-        return response;
-      })
-      .catch(error => {
-        throw error;
-      });
-  }
-
-  getForecastInfo(position) {
-    return OpenWeatherMapAPI.getForecastInfo(position.lat, position.lon)
+  getForecastInfo(location) {
+    return OpenWeatherMapAPI.getForecastInfo(location.lat, location.lon)
       .then(response => {
         console.log('getForecastInfo', response);
         return response;

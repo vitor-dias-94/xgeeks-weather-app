@@ -14,6 +14,7 @@ import moment from 'moment';
 const mapStateToProps = (state) => ({
   loadingWeather: state.weatherForecastInfoState.loadingWeather,
   weatherInfo: state.weatherForecastInfoState.weatherInfo,
+  weatherInfoLocation: state.weatherForecastInfoState.weatherInfoLocation,
   userLocation: state.appState.userLocation
 });
 
@@ -27,13 +28,13 @@ class WeatherInfo extends Component {
 
   constructor(props) {
     super(props);
-    this.init();
+    this.init(this.props.userLocation);
   }
 
-  async init() {
+  async init(location) {
     try {
       this.props.dispatchGetWeatherData();
-      const weatherInfo = await this.getWeatherInfo(this.props.userLocation);
+      const weatherInfo = await this.getWeatherInfo(location);
       this.props.dispatchUpdateWeatherData(weatherInfo);
     } catch (error) {
       console.error(error);
@@ -41,8 +42,15 @@ class WeatherInfo extends Component {
     }
   }
 
-  getWeatherInfo(position) {
-    return OpenWeatherMapAPI.getWeatherInfo(position.lat, position.lon)
+  componentDidUpdate(prevProps) {
+    if (this.props.weatherInfoLocation) {
+      this.init(this.props.weatherInfoLocation);
+      debugger
+    }
+  }
+
+  getWeatherInfo(location) {
+    return OpenWeatherMapAPI.getWeatherInfo(location.lat, location.lon)
       .then(response => {
         console.log('getWeatherInfo', response);
         return response;

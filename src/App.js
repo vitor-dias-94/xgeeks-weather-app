@@ -28,8 +28,8 @@ class App extends Component {
 
   async init() {
     try {
-      const position = await this.getGeolocation();
-      this.props.dispatchSetUserLocation(position);
+      const location = await this.getGeolocation();
+      this.props.dispatchSetUserLocation(location);
     } catch (error) {
       console.error(error);
       this.props.dispatchSetError(error.message || error);
