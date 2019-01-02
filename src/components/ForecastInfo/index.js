@@ -18,7 +18,7 @@ const mapDispatchToProps = (dispatch) => ({
 class ForecastInfo extends Component {
 
   render() {
-    if (this.props.loading || !this.props.forecastInfo) {
+    if (this.props.loading || !this.props.forecastInfo.length) {
       return (
         <Card className='forecast-info'>
           Loading forecast info...
@@ -32,7 +32,7 @@ class ForecastInfo extends Component {
           <thead>
             <tr className='header'>
               <th>City</th>
-              {this.props.forecastInfo.list.map((day) => {
+              {this.props.forecastInfo[0].list.map((day) => {
                 return (
                   <th key={day.dt}>
                     <div className='header'>
@@ -45,22 +45,26 @@ class ForecastInfo extends Component {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <p className='city'>{this.props.forecastInfo.city.name}, {this.props.forecastInfo.city.country}</p>
-              </td>
-              {this.props.forecastInfo.list.map((day) => {
-                return (
-                  <td key={day.dt}>
-                    <p><span className='max'>{day.temp.max} °C</span><span className='min'>{day.temp.min} °C</span></p>
-                    <p><i>{day.weather[0].description}</i></p>
-                    <p>{day.speed} m/s</p>
-                    <p>clouds: {day.clouds} %</p>
-                    <p>{day.pressure} hpa</p>
+            {this.props.forecastInfo.map((c) => {
+              return (
+                <tr key={c.city.id}>
+                  <td>
+                    <p className='city'>{c.city.name}, {c.city.country}</p>
                   </td>
-                );
-              })}
-            </tr>
+                  {c.list.map((day) => {
+                    return (
+                      <td key={day.dt}>
+                        <p><span className='max'>{day.temp.max} °C</span><span className='min'>{day.temp.min} °C</span></p>
+                        <p><i>{day.weather[0].description}</i></p>
+                        <p>{day.speed} m/s</p>
+                        <p>clouds: {day.clouds} %</p>
+                        <p>{day.pressure} hpa</p>
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </Card>

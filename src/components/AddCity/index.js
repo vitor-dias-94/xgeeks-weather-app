@@ -17,8 +17,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatchGetWeatherForecastData: () => dispatch(WeatherForecastInfoActions.getWeatherForecastData()),
-  dispatchSetWeatherForecastData: (data) => dispatch(WeatherForecastInfoActions.setWeatherForecastData(data)),
+  dispatchAddForecastData: (d) => dispatch(WeatherForecastInfoActions.addForecastData(d)),
 });
 
 class AddCity extends Component {
@@ -64,7 +63,24 @@ class AddCity extends Component {
   }
 
   addCity(city) {
-    console.log(city.coord);
+    this.getForecastInfo(city.coord)
+      .then(response => {
+        this.props.dispatchAddForecastData({ forecastInfo: response });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  getForecastInfo(position) {
+    return OpenWeatherMapAPI.getForecastInfo(position.lat, position.lon)
+      .then(response => {
+        console.log('getForecastInfo', response);
+        return response;
+      })
+      .catch(error => {
+        throw error;
+      });
   }
 
   componentWillUnmount() {
