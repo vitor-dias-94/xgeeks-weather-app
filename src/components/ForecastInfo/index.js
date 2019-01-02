@@ -12,16 +12,57 @@ import moment from 'moment';
 
 const mapStateToProps = (state) => ({
   loadingForecast: state.weatherForecastInfoState.loadingForecast,
-  forecastInfo: state.weatherForecastInfoState.forecastInfo
+  forecastInfo: state.weatherForecastInfoState.forecastInfo,
+  userLocation: state.weatherForecastInfoState.userLocation
 });
 
 const mapDispatchToProps = (dispatch) => ({
   dispatchGetWeatherData: () => dispatch(WeatherForecastInfoActions.getWeatherData()),
+  dispatchGetForecastData: () => dispatch(WeatherForecastInfoActions.getForecastData()),
   dispatchUpdateWeatherData: (d) => dispatch(WeatherForecastInfoActions.updateWeatherData(d)),
-  dispatchDeleteForecastData: (d) => dispatch(WeatherForecastInfoActions.deleteForecastData(d)),
+  dispatchAddForecastData: (d) => dispatch(WeatherForecastInfoActions.addForecastData(d)),
+  dispatchDeleteForecastData: (d) => dispatch(WeatherForecastInfoActions.deleteForecastData(d)),  
 });
 
 class ForecastInfo extends Component {
+
+  constructor(props) {
+    super(props);
+    this.canSaveLocalStorage = false;
+    this.init();
+  }
+
+  async init() {
+    try {
+      this.props.dispatchGetForecastData();   
+      const forecastInfo = await this.getForecastInfo(this.props.userLocation);
+      this.props.dispatchAddForecastData(forecastInfo);
+      await this.loadFromLocalStorage();
+      this.canSaveLocalStorage = true;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.canSaveLocalStorage && prevProps.forecastInfo.length !== this.props.forecastInfo.length)
+      this.saveToLocalStorage();
+  }
+
+  saveToLocalStorage() {
+    const coordsList = this.props.forecastInfo.map(c => {
+      return c.city.coord;
+    });
+    localStorage.setItem('coordsList', JSON.stringify(coordsList.slice(1)));
+  }
+
+  async loadFromLocalStorage() {
+    const coordsList = JSON.parse(localStorage.getItem('coordsList'));
+    for (let i = 0; i < coordsList.length; i++) {
+      const forecastInfo = await this.getForecastInfo(coordsList[i]);
+      this.props.dispatchAddForecastData(forecastInfo);
+    }
+  }
 
   handleUpdateClick = (city) => {
     this.props.dispatchGetWeatherData();
@@ -42,6 +83,17 @@ class ForecastInfo extends Component {
     return OpenWeatherMapAPI.getWeatherInfo(position.lat, position.lon)
       .then(response => {
         console.log('getWeatherInfo', response);
+        return response;
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
+
+  getForecastInfo(position) {
+    return OpenWeatherMapAPI.getForecastInfo(position.lat, position.lon)
+      .then(response => {
+        console.log('getForecastInfo', response);
         return response;
       })
       .catch(error => {

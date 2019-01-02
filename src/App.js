@@ -8,41 +8,31 @@ import './App.scss';
 import ForecastInfo from './components/ForecastInfo';
 import WeatherInfo from './components/WeatherInfo';
 import AddCity from './components/AddCity';
-// Services
-import * as OpenWeatherMapAPI from './services/OpenWeatherMapAPI';
 
 const mapStateToProps = (state) => ({
-  //
+  userLocation: state.weatherForecastInfoState.userLocation,
+  errorMessage: state.weatherForecastInfoState.errorMessage
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatchGetWeatherData: () => dispatch(WeatherForecastInfoActions.getWeatherData()),
-  dispatchGetForecastData: () => dispatch(WeatherForecastInfoActions.getForecastData()),
-  dispatchUpdateWeatherData: (d) => dispatch(WeatherForecastInfoActions.updateWeatherData(d)),
-  dispatchAddForecastData: (d) => dispatch(WeatherForecastInfoActions.addForecastData(d)),
+  dispatchSetUserLocation: (d) => dispatch(WeatherForecastInfoActions.setUserLocation(d)),
+  dispatchSetError: (d) => dispatch(WeatherForecastInfoActions.setError(d)),
 });
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-
     this.init();
   }
 
   async init() {
     try {
       const position = await this.getGeolocation();
-      
-      this.props.dispatchGetWeatherData();
-      const weatherInfo = await this.getWeatherInfo(position);
-      this.props.dispatchUpdateWeatherData(weatherInfo);
-      
-      this.props.dispatchGetForecastData();
-      const forecastInfo = await this.getForecastInfo(position);
-      this.props.dispatchAddForecastData(forecastInfo);
+      this.props.dispatchSetUserLocation(position);
     } catch (error) {
       console.error(error);
+      this.props.dispatchSetError(error.message);
     }
   }
 
@@ -63,29 +53,24 @@ class App extends Component {
     });
   }
 
-  getWeatherInfo(position) {
-    return OpenWeatherMapAPI.getWeatherInfo(position.lat, position.lon)
-      .then(response => {
-        console.log('getWeatherInfo', response);
-        return response;
-      })
-      .catch(error => {
-        throw error;
-      });
-  }
-
-  getForecastInfo(position) {
-    return OpenWeatherMapAPI.getForecastInfo(position.lat, position.lon)
-      .then(response => {
-        console.log('getForecastInfo', response);
-        return response;
-      })
-      .catch(error => {
-        throw error;
-      });
-  }
-
   render() {
+    if (this.props.errorMessage) {
+      return (
+        <div className="App">
+          <p>Error!</p>
+          <p>{this.props.errorMessage}</p>
+        </div>
+      );
+    }
+    
+    if (!this.props.userLocation) {
+      return (
+        <div className="App">
+          <p>Loading user location...</p>
+        </div>
+      );
+    }
+
     return (
       <div className="App">
         <WeatherInfo />

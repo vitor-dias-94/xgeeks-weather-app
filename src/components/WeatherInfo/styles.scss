@@ -2,6 +2,8 @@
   padding: 20px;
   margin-bottom: 20px;
   min-width: 300px;
+  display: flex;
+  flex-direction: column;
   h2 {
     margin: 5px;
   }

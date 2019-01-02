@@ -3,7 +3,9 @@ import {
   GET_FORECAST_DATA,
   UPDATE_WEATHER_DATA,
   ADD_FORECAST_DATA,
-  DELETE_FORECAST_DATA
+  DELETE_FORECAST_DATA,
+  SET_USER_LOCATION,
+  SET_ERROR
 } from './action-types';
 
 const initialState = {
@@ -11,6 +13,8 @@ const initialState = {
   loadingForecast: false,
   weatherInfo: null,
   forecastInfo: [],
+  userLocation: null,
+  errorMessage: ''
 };
 
 const WeatherForecastInfo = (state = initialState, action) => {
@@ -45,6 +49,18 @@ const WeatherForecastInfo = (state = initialState, action) => {
       return {
         ...state,
         forecastInfo: [...state.forecastInfo.slice(0, action.payload), ...state.forecastInfo.slice(action.payload + 1)],
+      };
+    }
+    case SET_USER_LOCATION: {
+      return {
+        ...state,
+        userLocation: action.payload 
+      };
+    }
+    case SET_ERROR: {
+      return {
+        ...state,
+        errorMessage: action.payload 
       };
     }
     default: {

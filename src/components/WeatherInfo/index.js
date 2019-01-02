@@ -1,21 +1,53 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+// Reducers actions
+import * as WeatherForecastInfoActions from '../../reducers/WeatherForecastInfo/actions';
 // Styles
 import './styles.scss';
 import { Card } from '@material-ui/core';
+// Services
+import * as OpenWeatherMapAPI from '../../services/OpenWeatherMapAPI';
 // Utils
 import moment from 'moment';
 
 const mapStateToProps = (state) => ({
   loadingWeather: state.weatherForecastInfoState.loadingWeather,
-  weatherInfo: state.weatherForecastInfoState.weatherInfo
+  weatherInfo: state.weatherForecastInfoState.weatherInfo,
+  userLocation: state.weatherForecastInfoState.userLocation
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  //
+  dispatchGetWeatherData: () => dispatch(WeatherForecastInfoActions.getWeatherData()),
+  dispatchUpdateWeatherData: (d) => dispatch(WeatherForecastInfoActions.updateWeatherData(d)),
 });
 
 class WeatherInfo extends Component {
+
+  constructor(props) {
+    super(props);
+    this.init();
+  }
+
+  async init() {
+    try {
+      this.props.dispatchGetWeatherData();
+      const weatherInfo = await this.getWeatherInfo(this.props.userLocation);
+      this.props.dispatchUpdateWeatherData(weatherInfo);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  getWeatherInfo(position) {
+    return OpenWeatherMapAPI.getWeatherInfo(position.lat, position.lon)
+      .then(response => {
+        console.log('getWeatherInfo', response);
+        return response;
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
 
   render() {
     if (this.props.loadingWeather || !this.props.weatherInfo) {
