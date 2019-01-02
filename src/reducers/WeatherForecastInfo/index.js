@@ -2,7 +2,8 @@ import {
   GET_WEATHER_DATA,
   GET_FORECAST_DATA,
   UPDATE_WEATHER_DATA,
-  ADD_FORECAST_DATA
+  ADD_FORECAST_DATA,
+  DELETE_FORECAST_DATA
 } from './action-types';
 
 const initialState = {
@@ -38,6 +39,12 @@ const WeatherForecastInfo = (state = initialState, action) => {
         ...state,
         loadingForecast: false,
         forecastInfo: [...state.forecastInfo, action.payload],
+      };
+    }
+    case DELETE_FORECAST_DATA: {
+      return {
+        ...state,
+        forecastInfo: [...state.forecastInfo.slice(0, action.payload), ...state.forecastInfo.slice(action.payload + 1)],
       };
     }
     default: {

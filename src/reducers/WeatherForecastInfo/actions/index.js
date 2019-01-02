@@ -2,7 +2,8 @@ import {
   GET_WEATHER_DATA,
   GET_FORECAST_DATA,
   UPDATE_WEATHER_DATA,
-  ADD_FORECAST_DATA
+  ADD_FORECAST_DATA,
+  DELETE_FORECAST_DATA
 } from '../action-types';
 
 export const getWeatherData = () => {
@@ -27,6 +28,13 @@ export const updateWeatherData = (data) => {
 export const addForecastData = (data) => {
   return {
     type: ADD_FORECAST_DATA,
+    payload: data
+  }
+};
+
+export const deleteForecastData = (data) => {
+  return {
+    type: DELETE_FORECAST_DATA,
     payload: data
   }
 };

@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+// Reducers actions
+import * as WeatherForecastInfoActions from '../../reducers/WeatherForecastInfo/actions';
 // Styles
 import './styles.scss';
-import { Card } from '@material-ui/core';
+import { Card, Button } from '@material-ui/core';
+// Services
+import * as OpenWeatherMapAPI from '../../services/OpenWeatherMapAPI';
 // Utils
 import moment from 'moment';
 
@@ -12,10 +16,38 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  //
+  dispatchGetWeatherData: () => dispatch(WeatherForecastInfoActions.getWeatherData()),
+  dispatchUpdateWeatherData: (d) => dispatch(WeatherForecastInfoActions.updateWeatherData(d)),
+  dispatchDeleteForecastData: (d) => dispatch(WeatherForecastInfoActions.deleteForecastData(d)),
 });
 
 class ForecastInfo extends Component {
+
+  handleUpdateClick = (city) => {
+    this.props.dispatchGetWeatherData();
+    this.getWeatherInfo(city.coord)
+      .then(response => {
+        this.props.dispatchUpdateWeatherData(response);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  handleDeleteClick = (index) => {
+    this.props.dispatchDeleteForecastData(index);
+  }
+
+  getWeatherInfo(position) {
+    return OpenWeatherMapAPI.getWeatherInfo(position.lat, position.lon)
+      .then(response => {
+        console.log('getWeatherInfo', response);
+        return response;
+      })
+      .catch(error => {
+        throw error;
+      });
+  }
 
   render() {
     if (this.props.loadingForecast || !this.props.forecastInfo.length) {
@@ -25,7 +57,7 @@ class ForecastInfo extends Component {
         </Card>
       );
     }
-    
+
     return (
       <Card className='forecast-info'>
         <table>
@@ -42,10 +74,11 @@ class ForecastInfo extends Component {
                   </th>
                 );
               })}
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {this.props.forecastInfo.map((c) => {
+            {this.props.forecastInfo.map((c, index) => {
               return (
                 <tr key={c.city.id}>
                   <td>
@@ -62,6 +95,16 @@ class ForecastInfo extends Component {
                       </td>
                     );
                   })}
+                  <td>
+                    <div className='actions'>
+                      <Button size='small' onClick={() => this.handleUpdateClick(c.city)}>
+                        See Weather
+                      </Button>
+                      {index ? <Button size='small' onClick={() => this.handleDeleteClick(index)}>
+                        Delete
+                      </Button> : ''}
+                    </div>
+                  </td>
                 </tr>
               );
             })}
