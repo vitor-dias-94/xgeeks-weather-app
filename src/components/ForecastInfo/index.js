@@ -14,6 +14,7 @@ import moment from 'moment';
 const mapStateToProps = (state) => ({
   loadingForecast: state.weatherForecastInfoState.loadingForecast,
   forecastInfo: state.weatherForecastInfoState.forecastInfo,
+  cityForecastLocation: state.weatherForecastInfoState.cityForecastLocation,
   userLocation: state.appState.userLocation
 });
 
@@ -35,7 +36,7 @@ class ForecastInfo extends Component {
 
   async init() {
     try {
-      this.props.dispatchGetForecastData();   
+      this.props.dispatchGetForecastData();
       const forecastInfo = await this.getForecastInfo(this.props.userLocation);
       this.props.dispatchAddForecastData(forecastInfo);
       await this.loadFromLocalStorage();
@@ -49,6 +50,20 @@ class ForecastInfo extends Component {
   componentDidUpdate(prevProps) {
     if (this.canSaveLocalStorage && prevProps.forecastInfo.length !== this.props.forecastInfo.length)
       this.saveToLocalStorage();
+    if (this.props.cityForecastLocation && prevProps.cityForecastLocation !== this.props.cityForecastLocation) {
+      this.addCityForecast(this.props.cityForecastLocation);
+    }
+  }
+
+  async addCityForecast(location) {
+    try {
+      this.props.dispatchGetForecastData();
+      const forecastInfo = await this.getForecastInfo(location);
+      this.props.dispatchAddForecastData(forecastInfo);
+    } catch (error) {
+      console.error(error);
+      this.props.dispatchSetError(error.message || error);
+    }
   }
 
   saveToLocalStorage() {
@@ -61,12 +76,12 @@ class ForecastInfo extends Component {
   async loadFromLocalStorage() {
     const coordsList = JSON.parse(localStorage.getItem('coordsList'));
     for (let i = 0; i < coordsList.length; i++) {
-      const forecastInfo = await this.getForecastInfo(coordsList[i]);
-      this.props.dispatchAddForecastData(forecastInfo);
+      await this.addCityForecast(coordsList[i]);
     }
   }
 
   handleUpdateClick = (city) => {
+    window.scrollTo (0, 0);
     this.props.dispatchRefreshWeatherLocation(city.coord);
   }
 
@@ -86,7 +101,7 @@ class ForecastInfo extends Component {
   }
 
   render() {
-    if (this.props.loadingForecast || !this.props.forecastInfo.length) {
+    if (!this.props.forecastInfo.length) {
       return (
         <Card className='forecast-info'>
           Loading forecast info...
@@ -105,7 +120,6 @@ class ForecastInfo extends Component {
                   <th key={day.dt}>
                     <div className='header'>
                       {moment.utc(day.dt, 'X').format('ddd D MMM')}
-                      <img src={`https://openweathermap.org/img/w/${day.weather[0].icon}.png`} width='50' height='50' alt='Icon' />
                     </div>
                   </th>
                 );
@@ -123,6 +137,7 @@ class ForecastInfo extends Component {
                   {c.list.map((day) => {
                     return (
                       <td key={day.dt}>
+                        <img src={`https://openweathermap.org/img/w/${day.weather[0].icon}.png`} width='50' height='50' alt='Icon' />
                         <p><span className='max'>{day.temp.max} °C</span><span className='min'>{day.temp.min} °C</span></p>
                         <p><i>{day.weather[0].description}</i></p>
                         <p>{day.speed} m/s</p>
@@ -146,6 +161,7 @@ class ForecastInfo extends Component {
             })}
           </tbody>
         </table>
+        {this.props.loadingForecast ? <p>Loading forecast info...</p> : ''}
       </Card>
     );
   }

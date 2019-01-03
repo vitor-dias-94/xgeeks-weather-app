@@ -17,8 +17,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  dispatchGetForecastData: () => dispatch(WeatherForecastInfoActions.getForecastData()),
-  dispatchAddForecastData: (d) => dispatch(WeatherForecastInfoActions.addForecastData(d)),
+  dispatchAddCityForecast: (d) => dispatch(WeatherForecastInfoActions.addCityForecast(d)),
 });
 
 class AddCity extends Component {
@@ -68,25 +67,7 @@ class AddCity extends Component {
       alert('Already added!');
       return;
     }
-    this.props.dispatchGetForecastData();
-    this.getForecastInfo(city.coord)
-      .then(response => {
-        this.props.dispatchAddForecastData(response);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
-
-  getForecastInfo(position) {
-    return OpenWeatherMapAPI.getForecastInfo(position.lat, position.lon)
-      .then(response => {
-        console.log('getForecastInfo', response);
-        return response;
-      })
-      .catch(error => {
-        throw error;
-      });
+    this.props.dispatchAddCityForecast(city.coord);
   }
 
   componentWillUnmount() {
@@ -108,6 +89,9 @@ class AddCity extends Component {
               <div key={item.id} style={{ backgroundColor: highlighted ? '#eee' : 'transparent' }}>
                 {item.resultMessage ? item.resultMessage : `${item.name}, ${item.sys.country}`}
               </div>
+            }
+            renderInput={(props) =>
+              <input {...props} disabled={this.state.loading} />
             }
             isItemSelectable={(item) => {
               return item.resultMessage ? false : true;

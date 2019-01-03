@@ -4,7 +4,8 @@ import {
   UPDATE_WEATHER_DATA,
   REFRESH_WEATHER_INFO_LOCATION,
   ADD_FORECAST_DATA,
-  DELETE_FORECAST_DATA
+  DELETE_FORECAST_DATA,
+  ADD_CITY_FORECAST
 } from './action-types';
 
 const initialState = {
@@ -12,7 +13,8 @@ const initialState = {
   loadingForecast: false,
   weatherInfo: null,
   weatherInfoLocation: null,
-  forecastInfo: []
+  forecastInfo: [],
+  cityForecastLocation: null
 };
 
 const WeatherForecastInfo = (state = initialState, action) => {
@@ -27,7 +29,8 @@ const WeatherForecastInfo = (state = initialState, action) => {
     case GET_FORECAST_DATA: {
       return {
         ...state,
-        loadingForecast: true
+        loadingForecast: true,
+        cityForecastLocation: null
       };
     }
     case UPDATE_WEATHER_DATA: {
@@ -54,6 +57,12 @@ const WeatherForecastInfo = (state = initialState, action) => {
       return {
         ...state,
         forecastInfo: [...state.forecastInfo.slice(0, action.payload), ...state.forecastInfo.slice(action.payload + 1)],
+      };
+    }
+    case ADD_CITY_FORECAST: {
+      return {
+        ...state,
+        cityForecastLocation: action.payload,
       };
     }
     default: {

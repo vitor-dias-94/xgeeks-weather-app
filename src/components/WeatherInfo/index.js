@@ -43,10 +43,8 @@ class WeatherInfo extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.weatherInfoLocation) {
+    if (this.props.weatherInfoLocation)
       this.init(this.props.weatherInfoLocation);
-      debugger
-    }
   }
 
   getWeatherInfo(location) {
