@@ -75,8 +75,10 @@ class ForecastInfo extends Component {
 
   async loadFromLocalStorage() {
     const coordsList = JSON.parse(localStorage.getItem('coordsList'));
-    for (let i = 0; i < coordsList.length; i++) {
-      await this.addCityForecast(coordsList[i]);
+    if (coordsList) {
+      for (let i = 0; i < coordsList.length; i++) {
+        await this.addCityForecast(coordsList[i]);
+      }
     }
   }
 
